@@ -35,9 +35,9 @@ format compact
 
 
 %% Parameters
-beh             = ['1','1','2','2'];  %behavior of the agent: '1','2','3' = flocking,
+beh             = ['1','1','1','2','2','2','c','c','c','e','e','e'];  %behavior of the agent: '1','2','3' = flocking,
 % 'c' = coverage,'r' = rendezvous, %'e' = exploration. 
-dx              = 0.075 ;%0.075  %space discretization
+dx              = 0.05 ;%0.075  %space discretization
 tend            = 10 ;          %ending time of the simulation
 n_agents        = length(beh);  %number of robots
 n_wp            = 1   ;         %number of waypoints
@@ -52,14 +52,14 @@ time            = 0:dt:tend ;                %time vector
 % Rmax            = 3*ones(n_agents,1);%
 for i = 1:n_agents
     if beh(i) == '1' || beh(i) == '2' || beh(i) == '3' || beh(i) == '4' || beh(i) == 'r'
-        Rmax(i) = 1;   %Maximum sensing radius
+        Rmax(i) = 0.5;   %Maximum sensing radius
     elseif beh(i) == 'c' || beh(i) == 'e'
-        Rmax(i) = 1;
+        Rmax(i) = 0.5;
     end
     Rmaxt0(i) = Rmax(i);
     Rmint0(i) = Rmax(i);
 end
-RmaxComm        = 10*ones(n_agents,1);  %Communication Radius  
+RmaxComm        = 5*ones(n_agents,1);  %Communication Radius  
 xlim            = [0 30] ;
 ylim            = [0 30] ;
 bbox            = [xlim(1),ylim(1);xlim(1),ylim(2);xlim(2),ylim(2);xlim(2),ylim(1)];
@@ -138,16 +138,16 @@ JJ              = cell(length(time),1);
 %% Flags
 
 flag_expl        = 1; 
-flag_cm          = 1;
-nonholo          = 0;
-task_switch_flag = 0;
-vwmst_flag       = 1;
+flag_cm          = 1; %connectivity maintenance
+nonholo          = 0; %nonholonomic constraints
+task_switch_flag = 0; %allow dynamic task switching
+vwmst_flag       = 1; %visible weighted minimum spanning tree 
 
-flag_obs        = 11;
-video_flag      =  0;
-manual_ics      =  0;
-planning_flag   =  0;
-manual_goal     =  0;
+flag_obs        = 18; %select obstacle configuration
+video_flag      =  0; 
+manual_ics      =  0; %reset initial conditions
+planning_flag   =  0; %global path planner
+manual_goal     =  0; %reset the final goal position 
 
 %% Obstacle definition
 switch flag_obs
@@ -420,7 +420,7 @@ y_obs_dyna(1,1)          = 0    ;
         
         for kk = 1:length(time)-1
             for j = 1:n_agents
-                if planning_flag == 1 %global path planner it is necessary for behaviors 1,2,3 
+                if planning_flag == 1 %&& length(str2num(beh(j)))>0 %global path planner it is necessary for behaviors 1,2,3 
                     if kk == 1  % is not necessary to compute every step, just for all agents
                         Wp{j}    = RRT1(x(1,j),y(1,j),goal(j,1,1),goal(j,2,1),x_obs-xi(j),y_obs-xi(j),obstacle_dim+2.2*xi(j),beh(j));
                         Wp{j}    = [goal(j,:,1);Wp{j}];
@@ -614,76 +614,19 @@ y_obs_dyna(1,1)          = 0    ;
             if vwmst_flag ==1
                 for m =   1:length(Ad)
                     for n = 1:length(Ad)
-                        if beh(m) == beh(n)%(beh(m) == '1' && beh(n) == '1') || (beh(m) == '2' && beh(n) == '2') || (beh(m) == 'r' && beh(n) == 'r') || (beh(m) == '3' && beh(n) == '3') || (beh(m) == '4' && beh(n) == '4')
+                        if beh(m) == beh(n)
                             if m == n
                                 Ad(m,n) = 1;
                             else
                                 if kk ==1
-                                    %                         Ad(m,n) = Ad(m,n) * (sizeComm(m,n)+ norm([x(kk,m)-x(kk,n),y(kk,m)-y(kk,n)]));
                                 else
                                     Ad(m,n) = Ad(m,n) * (sizeComm(m,n));
-                                    %                          Ad(m,n) = Ad(m,n)*norm([x(kk,m)-x(kk,n),y(kk,m)-y(kk,n)]);
-                                    
-                                    %+ norm([x(kk,m)-x(kk,n),y(kk,m)-y(kk,n)]));
-                                    %                     Ad(m,n) = Ad(m,n)*dot( [xbar(m)-x(kk,m),ybar(m)-y(kk,m)]/norm([xbar(m)-x(kk,m),ybar(m)-y(kk,m)])...
-                                    %                         ,([x(kk,n),y(kk,n)]-[x(kk,m),y(kk,m)])/norm([x(kk,n),y(kk,n)]-[x(kk,m),y(kk,m)]));
                                 end
                             end
-                            
-                            
-                            
-                            
-                            
-                            %         for m = 1:n_agents
-                            %             for n = 1:n_agents
-                            %                 Ad(m,n) = max(Ad(m,n),Ad(n,m));
-                            %                 Ad(n,m) = max(Ad(m,n),Ad(n,m));
-                            %             end
-                            %         end
-                            %         Ad = Adtmp0.*1./(Ad+1.1);
-                            
-                            %         for m = 1:n_agents
-                            %             for n = 1:n_agents
-                            %                 if Ad(m,n) > 0 && norm([x(kk,m)-x(kk,n),y(kk,m)-y(kk,n)])>min(RmaxComm(m),RmaxComm(n))-.1
-                            %                     Ad(m,n) = norm([x(kk,m)-x(kk,n),y(kk,m)-y(kk,n)]);
-                            %                 end
-                            %             end
-                            %         end
-                            %     end
-                            %     for m = 1:n_agents
-                            %         for n = 1:n_agents
-                            %             if ((beh(m) == 'c' && beh(n) =='c') || (beh(m) == 'e' && beh(n) == 'e'))
-                            %                 if kk == 1
-                            %                     Ad(m,n) = Ad(m,n) * (sizeComm(m,n)+ norm([x(kk,m)-x(kk,n),y(kk,m)-y(kk,n)]));
-                            %                 else
-                            %                     Ad(m,n) = Ad(m,n) * (sizeComm(m,n));%+ norm([x(kk,m)-x(kk,n),y(kk,m)-y(kk,n)]));
-                            % %                     Ad(m,n) = Ad(m,n)*norm([x(kk,m)-x(kk,n),y(kk,m)-y(kk,n)]);
-                            %
-                            %                 end
-                            %                 %                                 Ad(m,n) = Ad(m,n)*norm([x(kk,m)-x(kk,n),y(kk,m)-y(kk,n)]);
-                            %
-                            %
-                            %             end
-                            
-                            %      for m =   1:length(Ad)
-                            %             for n = 1:length(Ad)
-                            
-                            %     if beh(m) ~= beh(n)
                         elseif beh(m)== 'c' || beh(n) =='c' ||beh(m)== 'e' || beh(n) =='e'
-                            %             Ad(m,n) = 100*Ad(m,n)*norm([x(kk,m)-x(kk,n),y(kk,m)-y(kk,n)]);
-                            %                 Ad(m,n) = 100*Ad(m,n) * (sizeComm(m,n));
-                            %                 if (kk>1 && size(XX1{kk-1,m},1)<150) %|| cccc==1
-                            %                     Ad(m,n) = 1000*Ad(m,n) * (sizeComm(m,n));
-                            %                     cccc=1;
-                            %                 else
-                            Ad(m,n) = 1*Ad(m,n) * (sizeComm(m,n));%100*Ad(m,n) * (sizeComm(m,n));
-                            %                 end
-                            
-                            
-                            
-                            %                         Ad(m,n) = Ad(m,n) * (sizeComm(m,n));
+                            Ad(m,n) = 100*Ad(m,n) * (sizeComm(m,n));
                         else
-                            Ad(m,n) = 1*Ad(m,n) * (sizeComm(m,n));%1000*Ad(m,n) * (sizeComm(m,n));
+                            Ad(m,n) = 1000*Ad(m,n) * (sizeComm(m,n));
                             
                         end
                     end
