@@ -1,20 +1,16 @@
-function [Wp] = RRT1(x,y,x_goal,y_goal,x_obs,y_obs,obstacle_dim,beh)
+function [Wp] = RRT(x,y,x_goal,y_goal,x_obs,y_obs,obstacle_dim,plot)
 
-flag_plots  = 0;
-x_max       = 15;
-y_max       = 15;
-obstacle    = zeros(length(x_obs),4);
+flag_plots  = plot;
+x_max       = 12;
+y_max       = 10;
+obstacle = zeros(length(x_obs),4);
 
 for j = 1:length(x_obs)
 obstacle(j,:)  = [x_obs(j),y_obs(j),obstacle_dim(j,1),obstacle_dim(j,2)];
 end
 
-EPS = 1;%0.5;
-if length(str2num(beh))
-    numNodes = 1500;%1500;
-else
-    numNodes = 0;
-end
+EPS = .5;
+numNodes = 3000;
 q_start.coord = zeros(2,1);
 q_start.coord(1) = x;
 q_start.coord(2) = y;
@@ -39,9 +35,9 @@ for i = 1:1:numNodes
     %     q_rand = [2*randunif(1)+x 2*randunif(1)+y];
     
     
-    if flag_plots == 1
-        plot(q_rand(1), q_rand(2), 'x', 'Color',  [0 0.4470 0.7410])
-    end
+%     if flag_plots == 1
+%         plot(q_rand(1), q_rand(2), 'x', 'Color',  [0 0.4470 0.7410])
+%     end
     
     % Break if goal node is already reached
     for j = 1:1:length(nodes)
@@ -54,7 +50,7 @@ for i = 1:1:numNodes
     ndist = [];
     for j = 1:1:length(nodes)
         n = nodes(j);
-        tmp = dist1(n.coord, q_rand);
+        tmp = dist(n.coord, q_rand);
         ndist = [ndist tmp];
     end
     [val, idx] = min(ndist);
@@ -67,14 +63,14 @@ for i = 1:1:numNodes
             drawnow
             hold on
         end
-        q_new.cost = dist1(q_new.coord, q_near.coord) + q_near.cost;
+        q_new.cost = dist(q_new.coord, q_near.coord) + q_near.cost;
         
         % Within a radius of r, find all existing nodes
         q_nearest = [];
         r = 60;
         neighbor_count = 1;
         for j = 1:1:length(nodes)
-            if noCollision(nodes(j).coord, q_new.coord, obstacle) && dist1(nodes(j).coord, q_new.coord) <= r
+            if noCollision(nodes(j).coord, q_new.coord, obstacle) && dist(nodes(j).coord, q_new.coord) <= r
                 q_nearest(neighbor_count).coord = nodes(j).coord;
                 q_nearest(neighbor_count).cost = nodes(j).cost;
                 neighbor_count = neighbor_count+1;
@@ -89,12 +85,12 @@ for i = 1:1:numNodes
         % cost paths
         
         for k = 1:1:length(q_nearest)
-            if noCollision(q_nearest(k).coord, q_new.coord, obstacle) && q_nearest(k).cost + dist1(q_nearest(k).coord, q_new.coord) < C_min
+            if noCollision(q_nearest(k).coord, q_new.coord, obstacle) && q_nearest(k).cost + dist(q_nearest(k).coord, q_new.coord) < C_min
                 q_min = q_nearest(k);
-                C_min = q_nearest(k).cost + dist1(q_nearest(k).coord, q_new.coord);
-                if flag_plots == 1
-                    line([q_min.coord(1), q_new.coord(1)], [q_min.coord(2), q_new.coord(2)], 'Color', 'g');
-                end
+                C_min = q_nearest(k).cost + dist(q_nearest(k).coord, q_new.coord);
+%                 if flag_plots == 1
+%                     line([q_min.coord(1), q_new.coord(1)], [q_min.coord(2), q_new.coord(2)], 'Color', 'g');
+%                 end
                 %                 hold on
             end
         end
@@ -115,7 +111,7 @@ end
 
 D = [];
 for j = 1:1:length(nodes)
-    tmpdist = dist1(nodes(j).coord, q_goal.coord);
+    tmpdist = dist(nodes(j).coord, q_goal.coord);
     D = [D tmpdist];
 end
 
@@ -129,7 +125,7 @@ i = 0 ;
 while q_end.parent ~= 0
     start = q_end.parent;
 %     if flag_plots == 1
-        line([q_end.coord(1), nodes(start).coord(1)], [q_end.coord(2), nodes(start).coord(2)], 'Color', 'r', 'LineWidth', 2);
+        line([q_end.coord(1), nodes(start).coord(1)], [q_end.coord(2), nodes(start).coord(2)], 'Color', 'r', 'LineWidth', 2,'Linestyle','--');
         hold on
 %     end
     q_end = nodes(start);

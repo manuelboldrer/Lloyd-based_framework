@@ -59,7 +59,7 @@ for i = 1:n_agents
     Rmaxt0(i) = Rmax(i);
     Rmint0(i) = Rmax(i);
 end
-RmaxComm        = 10*ones(n_agents,1);  %Communication Radius  
+RmaxComm        = 4*ones(n_agents,1);  %Communication Radius  
 xlim            = [0 30] ;
 ylim            = [0 30] ;
 bbox            = [xlim(1),ylim(1);xlim(1),ylim(2);xlim(2),ylim(2);xlim(2),ylim(1)];
@@ -138,10 +138,10 @@ JJ              = cell(length(time),1);
 %% Flags
 
 flag_expl        = 1; 
-flag_cm          = 1;
+flag_cm          = 0;
 nonholo          = 0;
 task_switch_flag = 0;
-vwmst_flag       = 1;
+vwmst_flag       = 0;
 
 flag_obs        = 11;
 video_flag      =  0;
@@ -1180,28 +1180,26 @@ end
 
 for kk = 1:1:length(time)
     
-        for j = 1:n_agents
-            if behtime(kk,j) == '1'
-                colore(j,:) = DodgerBlue;
-            elseif behtime(kk,j) == '2'
-                colore(j,:) = DarkOrange;
-            elseif behtime(kk,j) == 'r'
-                colore(j,:) = [1;0;0];
-            elseif behtime(kk,j) == 'c'
-                colore(j,:) = [0;0;1];
-            elseif behtime(kk,j) == 'e'
-                colore(j,:) = [0;1;0];
-            elseif behtime(kk,j) == '3'
-                colore(j,:) = [1;1;0];
-            elseif behtime(kk,j) == '4'
-                colore(j,:) = [0;1;1];
-            end
-        end
+    %     for j = 1:n_agents
+    %         if behtime(kk,j) == '1'
+    %             colore(j,:) = DodgerBlue;
+    %         elseif behtime(kk,j) == '2'
+    %             colore(j,:) = DarkOrange;
+    %         elseif behtime(kk,j) == 'r'
+    %             colore(j,:) = [1;0;0];
+    %         elseif behtime(kk,j) == 'c'
+    %             colore(j,:) = [0;0;1];
+    %         elseif behtime(kk,j) == 'e'
+    %             colore(j,:) = [0;1;0];
+    %         elseif behtime(kk,j) == '3'
+    %             colore(j,:) = [1;1;0];
+    %         elseif behtime(kk,j) == '4'
+    %             colore(j,:) = [0;1;1];
+    %         end
+    %     end
     %     dot(hd(:,kk-1,m),([x(kk,n),y(kk,n)]-[x(kk,m),y(kk,m)])/norm([x(kk,m),y(kk,m)]-[x(kk,n),y(kk,n)]))
     %     dot(hd(:,kk-1,n),([x(kk,m),y(kk,m)]-[x(kk,n),y(kk,n)])/norm([x(kk,m),y(kk,m)]-[x(kk,n),y(kk,n)]))
-     squeeze(Add(kk,:,:));
-    [xo,yo] = gplot(ans,[x(kk,:)',y(kk,:)']);
-    edges = plot(xo,yo,'m');
+    
     for w = 1:n_obsD
         rectD(w,:) = human(obstacleD(kk,w,1),obstacleD(kk,w,2),VobsD(kk,w,1),VobsD(kk,w,2),sizeO);
     end
@@ -1225,7 +1223,7 @@ for kk = 1:1:length(time)
             plot_obj(j,:)  = plot_unicycle(x(kk,j), y(kk,j), theta(kk,j), 'k', sizeA(j));
         end
     end    
-    pause
+    
     box on    
     if video_flag == 1
         F(kk) = getframe(gcf);
