@@ -46,7 +46,7 @@ sizeA = 0.35*ones(n_agents,1);  %robot physical dimension (radius)
 xi    = sizeA*0.35+0.1;
 Rcoh(1,:)            = 1000*ones(n_agents,1);
 Rcoht0          = Rcoh;
-dt              = 0.05;%0.05;%033;%033   ;  %time step
+dt              = 0.033;%0.05;%033;%033   ;  %time step
 time            = 0:dt:tend ;                %time vector
 
 % Rmax            = 3*ones(n_agents,1);%
@@ -437,8 +437,8 @@ y_obs_dyna(1,1)          = 0    ;
             end
 
  %% Dynamic obstacles velocity
-            VobsD(kk,1,1)    = -0*(x_obs_dyna(kk,1)-x(kk,j))/norm([x_obs_dyna(kk,1)-x(kk,j),y_obs_dyna(kk,1)-y(kk,j)]);%1  ;%3*rand()     ;
-            VobsD(kk,1,2)    = -0*(y_obs_dyna(kk,1)-y(kk,j))/norm([x_obs_dyna(kk,1)-x(kk,j),y_obs_dyna(kk,1)-y(kk,j)]);%-.0 ;
+            VobsD(kk,1,1)    = -0*(x_obs_dyna(kk,1)-x(kk,j))/norm([x_obs_dyna(kk,1)-x(kk,j),y_obs_dyna(kk,1)-y(kk,j)]);
+            VobsD(kk,1,2)    = -0*(y_obs_dyna(kk,1)-y(kk,j))/norm([x_obs_dyna(kk,1)-x(kk,j),y_obs_dyna(kk,1)-y(kk,j)]);
 
             
             for q = 1:n_obsD
@@ -602,13 +602,7 @@ y_obs_dyna(1,1)          = 0    ;
                     end
                 end
             end
-            
-            %     if kk ==17
-            %         keyboard
-            %     end
-            
-            
-            %
+
             Adtmp0 = Ad;
             
             if vwmst_flag ==1
@@ -631,102 +625,18 @@ y_obs_dyna(1,1)          = 0    ;
                         end
                     end
                 end
-                Ad = Ad+Ad';
-                
-                
-                
+                Ad = Ad+Ad';               
                 G     = graph(Ad);
                 [MST] = minspantree(G);
                 sAd   =  adjacency(MST);
                 Ad    = full(sAd);
             end
-            %    Ad
-            %     for m = 1:length(Ad)
-            %         for n = 1:length(Ad)
-            %             Adtmp = Ad;
-            %             Adtmp(m,n) = 0;
-            %             Adtmp(n,m) = 0;
-            %             eigtmp = eig(diag(sum(Adtmp))-Adtmp);
-            %             if kk>1 && m ~= n && eigtmp(2) > 1e-6 &&... %sum(Ad(m,:))==3 &&...
-            %                     Ad(m,n) == 1 &&  (edgeselected(m) ~=n && edgeselected(n) ~=m)%isempty(find(edgeselected == n))
-            %
-            %                     % Ad(m,n) == 1 &&  (edgeselected(m) ~=n && edgeselected(n) ~=m ) %isempty(find(edgeselected == n))
-            %
-            %                 Ad(m,n) = 0;
-            %                 Ad(n,m) = 0;
-            %             end
-            %         end
-            %     end
-            
-            
-            
-            
-            
-            %     for m =   1:length(Ad)
-            %         for n = 1:length(Ad)
-            %             Adtmp = Ad;
-            %             Adtmp(m,n) = 0;
-            %             Adtmp(n,m) = 0;
-            %             eigtmp = eig(diag(sum(Adtmp))-Adtmp);
-            %             if kk>1 && m ~= n && sum(Ad(m,:))>3 && eigtmp(2) > 1e-6 &&...
-            %                     Ad(m,n) == 1 &&  edgediscarded(m) ==n %isempty(find(edgeselected == n))
-            %                 Ad(m,n) = 0;
-            %                 Ad(n,m) = 0;
-            %             end
-            %         end
-            %     end
-            %         for m = 1 :length(Ad)
-            %             for n = 1:length(Ad)
-            %                 Adtmp = Ad;
-            %                   eigtmp1 = eig(diag(sum(Ad))-Ad);
-            %                 Adtmp(m,n) = 0;
-            %                 Adtmp(n,m) = 0;
-            %                 eigtmp = eig(diag(sum(Adtmp))-Adtmp);
-            %     %
-            %                  if   m ~= n && Ad(m,n) >0
-            %                     if kk>1 && eigtmp(2) > 0.001 && eigtmp(2) < eigtmp1(2)
-            %                         Ad(m,n) = 0;
-            %                         Ad(n,m) = 0;
-            %     %                     countL(m,n) = 1;
-            %                     end
-            %
-            %                 end
-            %             end
-            %         end
-            
-            %Ad = [1 1 0 0 0;1 1 1 0 0;0 1 1 1 0;0 0 1 1 1;0 0 0 1 1];
-            % Ad = [1 0 1 0 0;0 1 0 1 1;1 0 1 0 1;0 1 0 1 0;0 1 1 0 1];
-            % Ad = zeros(n_agents);
+          
             if kk == 1
                 Ad0 = Ad;
             end
-            
-            
-            %Ad = [0 1 0 0 0;1 0 1 0 0; 0 1 0 1 0 ; 0 0 1 0 1; 0 0 0 1 0];
+                       
             Add(kk,:,:) = Ad;
-            %         Ad = neighbours(c{kk},n_agents);
-            %     AAA = rand(n_agents)+eye(n_agents)>0.5;
-            %     ASD =AAA*AAA'>=1;
-            %     Ad = ASD*eye(n_agents);
-            
-            %     Ad1 = neighbours(c{kk},n_agents);
-            %     for m = 1:n_agents
-            %         for n = 1:n_agents
-            %             if Ad1(m,n) >0 && beh(m)=='r' && beh(n) == 'r'
-            %                 Ad1(m,n)=1;
-            %             else
-            %                 Ad1(m,n)=0;
-            %             end
-            %         end
-            %     end
-            %     De   = diag(sum(Ad1)) ; %-eye(length(Ad));
-            %
-            %     Lap  = De-Ad1 ;
-            
-            %
-            % De   = diag(sum(Adtmp0)) ; %-eye(length(Ad));
-            % Lap  = De-Adtmp0 ;
-            %     Lap = diag(sum(Ad0))-Ad0;
             ww   = cell(n_agents,1);
             Xcom = cell(n_agents,1);
             Ycom = cell(n_agents,1);
@@ -773,8 +683,7 @@ y_obs_dyna(1,1)          = 0    ;
                                 Xvis{kk,j}    = Xvis{kk,j}(in1{n});
                                 Yvis{kk,j}    = Yvis{kk,j}(in1{n});
                             end
-                            sizeComm(j,n) = size(in1{n},2)/sum(in1{n});%sizexvis-size(xvise,2);%size(Xvis{kk,j},2)-sum(in1);
-                            % sum( UUfun(R(kk,j),XX1{kk,j},YY1{kk,j},xbar(j),ybar(j)))     
+                            sizeComm(j,n) = size(in1{n},2)/sum(in1{n});
                         end
                     end    
                 end                
@@ -872,8 +781,8 @@ y_obs_dyna(1,1)          = 0    ;
             end
             for j = 1:n_agents
                 if length(str2num(beh(j)))>0 || beh(j) == "r"
-                    R(kk,j)     = 0.35;%0.25
-                    %             if kk >1
+                    R(kk,j)     = 0.35;     %constant R value
+                    %             if kk >1  %time varying R value
                     %                 if norm([x(kk,j)-cx2(kk-1,j),y(kk,j)-cy2(kk-1,j)])<0.2 %||  ...
                     %                     %norm([x(kk,j)-cx(kk-1,j),y(kk,j)-cy(kk-1,j)])<0.05
                     %                     R(kk,j) = R(kk-1,j) - dt;
@@ -954,10 +863,7 @@ y_obs_dyna(1,1)          = 0    ;
                 end
                 for p = 1:length(XX2{kk,j})
                     if flag_expl == 0 || beh(j) ~= "e"
-                        
-                        %                 CX1 = CX1 + XX2{kk,j}(p)*(UUfun(R(kk,j),XX2{kk,j}(p),YY2{kk,j}(p),xbar(j),ybar(j)));
-                        %                 CY1 = CY1 + YY2{kk,j}(p)*(UUfun(R(kk,j),XX2{kk,j}(p),YY2{kk,j}(p),xbar(j),ybar(j)));
-                        
+
                         CX1 = CX1 + XX2{kk,j}(p)*(UUfun(R(kk,j),XX2{kk,j}(p),YY2{kk,j}(p),xbar(j),ybar(j)));
                         CY1 = CY1 + YY2{kk,j}(p)*(UUfun(R(kk,j),XX2{kk,j}(p),YY2{kk,j}(p),xbar(j),ybar(j)));
                         %             CX = CX + XX1{kk,j}(p)*(UUfun(XX1{kk,j}(p),YY1{kk,j}(p)));
@@ -1058,9 +964,8 @@ y_obs_dyna(1,1)          = 0    ;
 
             for j = 1:n_agents              
                 if nonholo==0                    
-                    x(kk+1,j)  = x(kk,j)     + xdot(kk,j)*dt ;%+x(kk,j)-x(kk-1,j)))*dt * dt;
+                    x(kk+1,j)  = x(kk,j)     + xdot(kk,j)*dt ;
                     y(kk+1,j)  = y(kk,j)     + ydot(kk,j)*dt ;
-                    %hd(:,kk,j)     = [cx(kk,j)-x(kk,j)' cy(kk,j)-y(kk,j)]/norm([cx(kk,j)-x(kk,j) cy(kk,j)-y(kk,j)]);
                     hd(:,kk,j)     = [wp_input_vec(1,kk,j)-x(kk,j)' wp_input_vec(2,kk,j)-y(kk,j)]/norm([wp_input_vec(1,kk,j)-x(kk,j) wp_input_vec(2,kk,j)-y(kk,j)]);                    
                 else                    
                     hd(:,kk,j)     = [wp_input_vec(1,kk,j)-x(kk,j)' wp_input_vec(2,kk,j)-y(kk,j)]/norm([wp_input_vec(1,kk,j)-x(kk,j) wp_input_vec(2,kk,j)-y(kk,j)]);
@@ -1086,8 +991,8 @@ y_obs_dyna(1,1)          = 0    ;
   
 %% Post-processing (Plots)
 obstacles            = zeros(length(x_obs),4);
-drones               = gobjects(n_agents,9); % initialize array of plots
-plot_obj             = gobjects(n_agents,7); % initialize array of plots
+drones               = gobjects(n_agents,9); 
+plot_obj             = gobjects(n_agents,7); 
 verCellHandle        = gobjects(length(time),1);
 rect                 = gobjects(1,length(x_obs));
 rectD                = gobjects(n_obsD,13);
@@ -1102,7 +1007,7 @@ scat                 = gobjects(n_agents,1);
 arrow1               = gobjects(n_agents,1);
 delaunay             = gobjects(length(time),1);
 apol                 = gobjects(n_agents,n_obsD);
-cone_obj             = gobjects(1,4); % initialize array of plots
+cone_obj             = gobjects(1,4); 
 edges = gobjects(1,1) ;
 colore = zeros(n_agents,3);
 
@@ -1140,8 +1045,7 @@ for kk = 1:1:length(time)
                 colore(j,:) = [0;1;1];
             end
         end
-    %     dot(hd(:,kk-1,m),([x(kk,n),y(kk,n)]-[x(kk,m),y(kk,m)])/norm([x(kk,m),y(kk,m)]-[x(kk,n),y(kk,n)]))
-    %     dot(hd(:,kk-1,n),([x(kk,m),y(kk,m)]-[x(kk,n),y(kk,n)])/norm([x(kk,m),y(kk,m)]-[x(kk,n),y(kk,n)]))
+
      squeeze(Add(kk,:,:));
     [xo,yo] = gplot(ans,[x(kk,:)',y(kk,:)']);
     edges = plot(xo,yo,'m');
@@ -1161,9 +1065,7 @@ for kk = 1:1:length(time)
         %         traj =   plot(x(1:kk,j),y(1:kk,j),'-','linewidth',0.01,'Color','k');
         %                                 circ2(j)     = circle(x(kk,j),y(kk,j),Rmaxt0(j),'none');
         if nonholo == 0
-%             circ1(j)       = circle(x(kk,j),y(kk,j),1,[1 0.1 0.1]);
                        circ1(j)       = circle(x(kk,j),y(kk,j),.35*sizeA(j),colore(j,:));
-
         else
             plot_obj(j,:)  = plot_unicycle(x(kk,j), y(kk,j), theta(kk,j), 'k', sizeA(j));
         end
@@ -1190,15 +1092,9 @@ for kk = 1:1:length(time)
         delete(plot_obj)
         delete(circ);
         delete(circ1);
-        % delete(wpplot);
         delete(delaunay);
         delete(txt);
-%         delete(edges);
-        % delete(traj);
         delete(scat);
-        % delete(obs_circle);
-%         delete(ar)
-        %                 delete(circ2);
     else
         break
     end
