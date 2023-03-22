@@ -37,7 +37,7 @@ format compact
 %% Parameters
 beh             = ['1','1','1','2','2','2','c','c','c','e','e','e'];  %behavior of the agent: '1','2','3' = flocking,
 % 'c' = coverage,'r' = rendezvous, %'e' = exploration. 
-dx              = 0.05 ;%0.075  %space discretization
+dx              = 0.03 ;%0.075  %space discretization
 tend            = 10 ;          %ending time of the simulation
 n_agents        = length(beh);  %number of robots
 n_wp            = 1   ;         %number of waypoints
@@ -1058,6 +1058,13 @@ for kk = 1:1:length(time)
         set(verCellHandle(kk,j), 'XData',XX1{kk,j}(bound),'YData',YY1{kk,j}(bound));
     end
 
+plot(goal(1,1),goal(1,2),'x','color',colore(1,:))
+plot(goal(2,1),goal(2,2),'x','color',colore(1,:))
+plot(goal(3,1),goal(3,2),'x','color',colore(1,:))
+plot(goal(4,1),goal(4,2),'x','color',colore(1,:))
+plot(goal(1,1),goal(1,2),'x','color',colore(1,:))
+plot(goal(1,1),goal(1,2),'x','color',colore(1,:))
+plot(goal(1,1),goal(1,2),'x','color',colore(1,:))
 
     for j = 1:n_agents
                                                 centr(kk,j)             = plot( cx(kk,j), cy(kk,j),'bx');
@@ -1070,7 +1077,7 @@ for kk = 1:1:length(time)
             plot_obj(j,:)  = plot_unicycle(x(kk,j), y(kk,j), theta(kk,j), 'k', sizeA(j));
         end
     end    
-    pause
+%     pause
     box on    
     if video_flag == 1
         F(kk) = getframe(gcf);

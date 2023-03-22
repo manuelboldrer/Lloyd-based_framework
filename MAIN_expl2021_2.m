@@ -22,10 +22,6 @@
 % Graph connectivity control of a mobile robot network with mixed dynamic multi-tasks. 
 % IEEE Robotics and Automation Letters, 6(2), 1934-1941.
 
-%[4] Boldrer, M., Pasqualetti, F., Palopoli, L., & Fontanelli, D. (2022). 
-% Multiagent persistent monitoring via time-inverted kuramoto dynamics. 
-% IEEE Control Systems Letters, 6, 2798-2803.
-
 
 close all force
 clearvars
@@ -782,15 +778,15 @@ y_obs_dyna(1,1)          = 0    ;
             for j = 1:n_agents
                 if length(str2num(beh(j)))>0 || beh(j) == "r"
                     R(kk,j)     = 0.35;     %constant R value
-                    %             if kk >1  %time varying R value
-                    %                 if norm([x(kk,j)-cx2(kk-1,j),y(kk,j)-cy2(kk-1,j)])<0.2 %||  ...
-                    %                     %norm([x(kk,j)-cx(kk-1,j),y(kk,j)-cy(kk-1,j)])<0.05
-                    %                     R(kk,j) = R(kk-1,j) - dt;
-                    %                     R(kk,j) = max(R(kk,j),0.05);
-                    %                 else
-                    %                     R(kk,j) = R(kk-1,j) -dt*(R(kk-1,j)-R(1,j));
-                    %                 end
-                    %             end
+                                if kk >1  %time varying R value
+                                    if norm([x(kk,j)-cx2(kk-1,j),y(kk,j)-cy2(kk-1,j)])<0.2 %||  ...
+                                        %norm([x(kk,j)-cx(kk-1,j),y(kk,j)-cy(kk-1,j)])<0.05
+                                        R(kk,j) = R(kk-1,j) - dt;
+                                        R(kk,j) = max(R(kk,j),0.1);
+                                    else
+                                        R(kk,j) = R(kk-1,j) -dt*(R(kk-1,j)-R(1,j));
+                                    end
+                                end
                 elseif beh(j) == "c" || beh(j) == "e"
                     R(1,j)= 1000;
                     R(kk,j) = R(1,j);
@@ -1058,6 +1054,12 @@ for kk = 1:1:length(time)
         set(verCellHandle(kk,j), 'XData',XX1{kk,j}(bound),'YData',YY1{kk,j}(bound));
     end
 
+plot(goal(1,1),goal(1,2),'x','color',colore(1,:))
+plot(goal(2,1),goal(2,2),'x','color',colore(1,:))
+plot(goal(3,1),goal(3,2),'x','color',colore(1,:))
+plot(goal(4,1),goal(4,2),'x','color',colore(4,:))
+plot(goal(5,1),goal(5,2),'x','color',colore(4,:))
+plot(goal(6,1),goal(6,2),'x','color',colore(4,:))
 
     for j = 1:n_agents
                                                 centr(kk,j)             = plot( cx(kk,j), cy(kk,j),'bx');
@@ -1070,7 +1072,7 @@ for kk = 1:1:length(time)
             plot_obj(j,:)  = plot_unicycle(x(kk,j), y(kk,j), theta(kk,j), 'k', sizeA(j));
         end
     end    
-    pause
+%     pause
     box on    
     if video_flag == 1
         F(kk) = getframe(gcf);
