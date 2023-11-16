@@ -16,9 +16,6 @@ part of the simulation results in the following papers:
  Graph connectivity control of a mobile robot network with mixed dynamic multi-tasks. 
  IEEE Robotics and Automation Letters, 6(2), 1934-1941.
 
-[4] Boldrer, M., Pasqualetti, F., Palopoli, L., & Fontanelli, D. (2022). 
- Multiagent persistent monitoring via time-inverted kuramoto dynamics. 
- IEEE Control Systems Letters, 6, 2798-2803.
 
 Youtube videos can be found here:
 
